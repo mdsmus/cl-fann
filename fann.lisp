@@ -6,13 +6,18 @@
 (in-package :fann)
 
 (define-foreign-library libfann
-  (:unix (:or "libfann.so.2" "libfann.so" "/usr/local/lib/libfann.so.2" "/usr/local/lib/libfann.so"))
-  (t "libfann.so"))
+  (:unix (:or "libfann.so.2" "libfann.so"))
+  (t (:default "libfann")))
 
 (defun load-fann ()
   (use-foreign-library libfann))
 
-(load-fann)
+(handler-case (load-fann)
+  (load-foreign-library-error (expr)
+    (format t "~%======================================================")
+    (format t "~%~%~%Voce nao tem fann instalada, terminando compilação.~%~%")
+    (format t "~%======================================================")
+    #+sbcl(sb-ext:quit)))
 
 (defcfun "fann_create_standard_array" :pointer (num_layers :int) (layers :pointer))
 
