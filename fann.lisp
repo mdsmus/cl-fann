@@ -14,6 +14,7 @@
 
 (handler-case (load-fann)
   (load-foreign-library-error (expr)
+    (declare (ignore expr))
     (format t "~%======================================================")
     (format t "~%~%~%Voce nao tem fann instalada, terminando compilação.~%~%")
     (format t "~%======================================================")
