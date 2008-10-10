@@ -17,6 +17,7 @@
   `(handler-case (progn (load-fann)
                         (let ((ret (progn ,@body)))
                           (close-fann)
+                          (close-fann)
                           ret))
      (load-foreign-library-error (expr)
        (declare (ignore expr))
@@ -100,3 +101,24 @@
            
                          
 )
+
+(in-package :sb-impl)
+
+#+sbcl (defun reinit ()
+  #+win32 (setf sb!win32::*ansi-codepage* nil)
+  (setf *default-external-format* nil)
+  
+  ;; WITHOUT-GCING implies WITHOUT-INTERRUPTS.
+  (without-gcing
+    (os-cold-init-or-reinit)
+    (thread-init-or-reinit)
+    (stream-reinit t)
+    #-win32 (signal-cold-init-or-reinit)
+    (float-cold-init-or-reinit))
+  (gc-reinit)
+  (handler-case (foreign-reinit)
+    (error (err) (declare (ignore err))))
+  (time-reinit)
+  ;; If the debugger was disabled in the saved core, we need to
+  ;; re-disable ldb again.
+  #-sbcl(call-hooks "initialization" *init-hooks*))
