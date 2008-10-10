@@ -15,8 +15,9 @@
 
 (defmacro with-fann (&body body)
   `(handler-case (progn (load-fann)
-                        ,@body
-                        (close-fann))
+                        (let ((ret (progn ,@body)))
+                          (close-fann)
+                          ret))
      (load-foreign-library-error (expr)
        (declare (ignore expr))
        :fann-load-error)))
