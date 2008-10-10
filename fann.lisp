@@ -1,7 +1,7 @@
 (defpackage :fann
   (:use :cl :cffi)
   (:export :make-net :make-shortcut-net :cascade-train-on-file
-           :train-on-file :load-from-file :save-to-file :run-net :load-fann :close-fann))
+           :train-on-file :load-from-file :save-to-file :run-net :load-fann :close-fann :with-fann))
 
 (in-package :fann)
 
