@@ -56,7 +56,7 @@
 
   (defun load-from-file (filename)
     "Carrega uma rede preconfigurada e pretreinada de um arquivo."
-    (let ((net (fann-create-from-file filename)))
+    (let ((net (fann-create-from-file (namestring filename))))
       (make-fann-net :fann-net net
                      :inputs (fann-get-num-input net)
                      :outputs (fann-get-num-output net))))
@@ -65,7 +65,7 @@
 
   (defun save-to-file (net file)
     "Salva uma rede num arquivo"
-    (fann-save (fann-net-fann-net net) file))
+    (fann-save (fann-net-fann-net net) (namestring file)))
 
   (defcfun "fann_train_on_file" :void
     (net :pointer)
@@ -75,7 +75,7 @@
     (desired-error :float))
 
   (defun train-on-file (net file max-e ebr de)
-    (fann-train-on-file (fann-net-fann-net net) file max-e ebr de))
+    (fann-train-on-file (fann-net-fann-net net) (namestring file) max-e ebr de))
 
   (defcfun "fann_cascadetrain_on_file" :void
     (net :pointer)
@@ -85,7 +85,7 @@
     (desired-error :float))
 
   (defun cascade-train-on-file (net file max-e ebr de)
-    (fann-cascadetrain-on-file (fann-net-fann-net net) file max-e ebr de))
+    (fann-cascadetrain-on-file (fann-net-fann-net net) (namestring file) max-e ebr de))
 
 
   (defcfun "fann_run" :pointer (net :pointer) (inputs :pointer))
