@@ -102,7 +102,9 @@
                          
 )
 
-(in-package :sb-impl)
+#|
+
+#+sbcl (in-package :sb-impl)
 
 #+sbcl (defun reinit ()
   #+win32 (setf sb!win32::*ansi-codepage* nil)
@@ -122,3 +124,4 @@
   ;; If the debugger was disabled in the saved core, we need to
   ;; re-disable ldb again.
   #-sbcl(call-hooks "initialization" *init-hooks*))
+|#
