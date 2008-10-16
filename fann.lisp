@@ -5,7 +5,15 @@
 
 (in-package :fann)
 
-(define-foreign-library libfann (:unix "libfann.so.2"))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *local-fann*
+    (namestring
+     (make-pathname :directory (pathname-directory (translate-logical-pathname "rameau:lib;"))
+                    :name "libfann"
+                    :type "so"))))
+
+(define-foreign-library libfann
+  (:unix #.*local-fann*))
 
 (defun load-fann ()
   (use-foreign-library libfann))
