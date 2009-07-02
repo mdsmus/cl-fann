@@ -1,7 +1,7 @@
 (defpackage :fann
   (:use :cl :cffi)
   (:export :make-net :make-shortcut-net :cascade-train-on-file
-           :train-on-file :load-from-file :save-to-file :run-net :load-fann :close-fann :with-fann))
+           :train-on-file :load-from-file :save-to-file :run-net :load-fann :close-fann :with-fann :set-output-fun-linear))
 
 (in-package :fann)
 
@@ -92,3 +92,8 @@
     (let ((res (fann-run (fann-net-fann-net net) input)))
       (loop for i from 0 to (1- (fann-net-outputs net))
          collect (mem-aref res :float i)))))
+
+(defcfun "fann_set_activation_function_output" :void (net :pointer) (coisa :int))
+
+(defun set-output-fun-linear (net)
+  (fann-set-activation-function-output (fann-net-fann-net net) 0))
