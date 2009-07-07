@@ -20,6 +20,7 @@
 (load-fann)
 
 (defcfun "fann_create_standard_array" :pointer (num_layers :int) (layers :pointer))
+(defcfun "fann_destroy" :void (layers :pointer))
 
 (defcfun "fann_create_shortcut_array" :pointer (num_layers :int) (layers :pointer))
 
@@ -31,9 +32,14 @@
     (loop for i in camadas
        for j from 0
        do (setf (mem-aref layers :int j) i))
-    (make-fann-net :fann-net (fann-create-standard-array (length camadas) layers)
-                   :inputs (first camadas)
-                   :outputs (first (last camadas)))))
+    (let* ((internal-net (fann-create-standard-array (length camadas) layers))
+           (external (make-fann-net :fann-net internal-net
+                                    :inputs (first camadas)
+                                    :outputs (first (last camadas)))))
+      #+sbcl (sb-ext:finalize external
+                              (lambda (&rest args)
+                                (fann-destroy internal-net)))
+      external)))
 
 (defun make-shortcut-net (&rest camadas)
   (with-foreign-object (layers :int (length camadas))
